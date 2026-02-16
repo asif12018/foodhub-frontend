@@ -154,7 +154,7 @@ const Navbar = ({ className }: Navbar5Props) => {
 
        
          {
-           !session && <Button>Start for free</Button>
+           !session && <Button asChild><Link href="/register">Start for free</Link></Button>
          }
             
           </div>
@@ -195,8 +195,22 @@ const Navbar = ({ className }: Navbar5Props) => {
                   </a>
                 </div>
                 <div className="mt-6 flex flex-col gap-4">
-                  <Link href="/signin"  className="bg-[#171717] text-white p-2 rounded-md text-center font-semibold">Sign in</Link>
-                  <Button>Start for free</Button>
+                  {
+                    loading ? null : session  ?(
+                       <Button
+      onClick={handleLogout}
+      disabled={isPending}
+      variant="outline"
+    >
+      {isPending ? "Signing out..." : "Sign out"}
+    </Button>
+                    ): (
+                      <Link href="/signin"  className="bg-[#171717] text-white p-2 rounded-md text-center font-semibold">Sign in</Link>
+                    )
+                  }
+                  {
+                    !session && <Button asChild><Link href="/register">Start for free</Link></Button>
+                  }
                 </div>
               </div>
             </SheetContent>
