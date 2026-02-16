@@ -27,44 +27,63 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { getSession } from "@/server action/auth.action";
 
 interface Navbar5Props {
   className?: string;
 }
 
 const Navbar = ({ className }: Navbar5Props) => {
-  const features = [
-    {
-      title: "Dashboard",
-      description: "Overview of your activity",
-      href: "#",
-    },
-    {
-      title: "Analytics",
-      description: "Track your performance",
-      href: "#",
-    },
-    {
-      title: "Settings",
-      description: "Configure your preferences",
-      href: "#",
-    },
-    {
-      title: "Integrations",
-      description: "Connect with other tools",
-      href: "#",
-    },
-    {
-      title: "Storage",
-      description: "Manage your files",
-      href: "#",
-    },
-    {
-      title: "Support",
-      description: "Get help when needed",
-      href: "#",
-    },
-  ];
+  const router = useRouter();
+ 
+  const [response, setResponse] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+  const [session, setSession] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+
+  const load = async()=>{
+    const res = await getSession();
+    setSession(res?.data ?? null);
+    setLoading(false);
+
+  }
+
+  //first load
+  useEffect(()=>{
+       load();
+  },[])
+
+  //refresh when user comes back to tab
+  useEffect(()=>{
+    window.addEventListener("focus", load);
+    return ()=> window.removeEventListener("focus", load);
+  },[])
+  const handleLogout = async ()=>{
+    setIsPending(true);
+    const toastId = toast("Signing out....");
+    try{
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-out`,{
+        method:"POST",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        credentials:"include"
+      })
+      const data = await res.json();
+      setResponse(data);
+      toast.success("User Signout successfully", {id: toastId});
+      await load();        
+    router.refresh(); 
+    }catch(err){
+       toast.error("Something went wrong", {id: toastId});
+    }finally{
+      setIsPending(false);
+    }
+  }
 
   return (
     <section className={cn("py-4", className)}>
@@ -92,7 +111,7 @@ const Navbar = ({ className }: Navbar5Props) => {
                 >
                   Products
                 </NavigationMenuLink> */}
-                <Link href="/signin" className={navigationMenuTriggerStyle()}>signin</Link>
+                <Link href="/" className={navigationMenuTriggerStyle()}>home</Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink
@@ -113,8 +132,31 @@ const Navbar = ({ className }: Navbar5Props) => {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="hidden items-center gap-4 lg:flex">
-            <Button variant="outline">Sign in</Button>
-            <Button>Start for free</Button>
+            {/* <Button asChild variant="outline"><Link href={"/signin"} >Sign in</Link></Button>
+            <Button onClick={()=>handleLogout()} disabled={isPending} variant="outline">{isPending ? "Signing out..." : "Sign out"}</Button> */}
+
+              {loading ? null : session ? (
+    // USER LOGGED IN
+    <Button
+      onClick={handleLogout}
+      disabled={isPending}
+      variant="outline"
+    >
+      {isPending ? "Signing out..." : "Sign out"}
+    </Button>
+  ) : (
+    // USER NOT LOGGED IN
+    <Button asChild variant="outline">
+      <Link href="/signin">Sign in</Link>
+    </Button>
+    
+  )}
+
+       
+         {
+           !session && <Button>Start for free</Button>
+         }
+            
           </div>
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
