@@ -125,8 +125,9 @@ const Navbar = ({ className }: Navbar5Props) => {
                 <NavigationMenuLink
                   href="#"
                   className={navigationMenuTriggerStyle()}
+                  asChild
                 >
-                  Contact
+                 <Link href="/allFood"> Menu</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
