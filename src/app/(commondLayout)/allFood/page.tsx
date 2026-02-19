@@ -11,16 +11,22 @@ import {
 import { foodService } from "@/services/food.service";
 import { categoryService } from "@/services/category.service";
 import { CuisineFilter } from "@/components/cuisine-filter";
+import CheckboxDiateryPreference from "@/components/dietary-filter";
 
 export default async function AllFood({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; cuisine?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    cuisine?: string;
+    dietary_tags?: string;
+  }>;
 }) {
   //pagination code
   const resolvedParams = await searchParams;
   const currentPage = Number(resolvedParams.page) || 1;
   const cuisine = resolvedParams.cuisine;
+  const dietary_tags = resolvedParams.dietary_tags;
 
   //-----------------
   const { data: categoriesData } = await categoryService.getAllCategory();
@@ -30,6 +36,7 @@ export default async function AllFood({
       limit: 10,
       page: currentPage,
       cuisine: cuisine,
+      dietary_tags: dietary_tags ? dietary_tags.split(",") : undefined,
     },
     {
       cache: "no-cache",
@@ -48,6 +55,7 @@ export default async function AllFood({
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams();
     if (cuisine) params.set("cuisine", cuisine);
+    if (dietary_tags) params.set("dietary_tags", dietary_tags);
     params.set("page", pageNumber.toString());
     return `?${params.toString()}`;
   };
@@ -59,6 +67,9 @@ export default async function AllFood({
       <h1 className="text-2xl font-bold text-center mt-5">All Food</h1>
 
       <CuisineFilter categories={categoriesData?.data || []} />
+      <div className="my-5 flex items-center justify-center gap-2">
+        <CheckboxDiateryPreference />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data?.data?.data?.map((food) => (
