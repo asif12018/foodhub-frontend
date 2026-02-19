@@ -185,12 +185,12 @@ const Navbar = ({ className }: Navbar5Props) => {
               </SheetHeader>
               <div className="flex flex-col p-4">
                 <div className="flex flex-col gap-6">
-                  <a href="#" className="font-medium">
-                    Templates
-                  </a>
-                  <a href="#" className="font-medium">
-                    Blog
-                  </a>
+                  <Link href="/" className="font-medium">
+                    Home
+                  </Link>
+                  <Link href="/allFood" className="font-medium">
+                    Menu
+                  </Link>
                   <a href="#" className="font-medium">
                     Pricing
                   </a>
