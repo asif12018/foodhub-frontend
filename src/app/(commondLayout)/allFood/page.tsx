@@ -12,6 +12,8 @@ import { foodService } from "@/services/food.service";
 import { categoryService } from "@/services/category.service";
 import { CuisineFilter } from "@/components/cuisine-filter";
 import CheckboxDiateryPreference from "@/components/dietary-filter";
+import { Slider } from "@/components/ui/slider";
+import { SliderControlled } from "@/components/module/get all food/slider";
 
 export default async function AllFood({
   searchParams,
@@ -22,6 +24,7 @@ export default async function AllFood({
     dietary_tags?: string;
   }>;
 }) {
+
   //pagination code
   const resolvedParams = await searchParams;
   const currentPage = Number(resolvedParams.page) || 1;
@@ -42,6 +45,11 @@ export default async function AllFood({
       cache: "no-cache",
     },
   );
+
+  //min max price
+
+  const {data:priceData, error:priceError} = await foodService.getMinMaxPrice();
+
 
   //pagination code
 
@@ -69,6 +77,10 @@ export default async function AllFood({
       <CuisineFilter categories={categoriesData?.data || []} />
       <div className="my-5 flex items-center justify-center gap-2">
         <CheckboxDiateryPreference />
+      </div>
+
+      <div className="my-10">
+          <SliderControlled min={priceData.min.price || 0} max={priceData.max.price || 2000} step={5}/>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

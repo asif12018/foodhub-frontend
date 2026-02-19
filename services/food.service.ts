@@ -75,4 +75,15 @@ export const foodService = {
       };
     }
   },
+  getMinMaxPrice: async function (){
+    try{
+      const url = new URL(`${API_URL}/api/provider/price`);
+      const res = await fetch(url.toString());
+      const data = await res.json();
+      return {data: data?.data, error:null }
+    }catch(err:any){
+      console.error(err);
+      return {data: null, error: {message: err.message || "Something went wrong"}}
+    }
+  }
 };
