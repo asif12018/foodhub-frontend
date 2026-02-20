@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export interface ProductPrice {
   regular: number;
@@ -95,7 +96,7 @@ const ProductCard1 = ({ className, product }: ProductCard1Props) => {
             <p><span className="font-bold">Preparation time: </span>{product.preparation_time} Minutes</p>
             <p><span className="font-bold">Dietary Tags: </span>{product.dietary_tags.map((tag) => <Badge key={tag}>{tag}</Badge> )}</p>
              
-             <Button className="w-full mt-2">View and Order</Button>
+             <Button asChild className="w-full mt-2"><Link href={`/allFood/${product.id}`}>View and Order</Link></Button>
           </div>
         </CardContent>
       </Card>

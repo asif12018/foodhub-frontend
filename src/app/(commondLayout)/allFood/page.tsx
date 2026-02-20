@@ -93,7 +93,8 @@ export default async function AllFood({
         />
       </div>
 
-      <div className="grid grid-cols-1 justify-center items-center md:grid-cols-2  lg:grid-cols-3 gap-6 border-2">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 justify-center items-center md:grid-cols-2  lg:grid-cols-3 gap-6">
         {data?.data?.data?.map((food) => (
           <ProductCard1
             key={food.id}
@@ -117,6 +118,7 @@ export default async function AllFood({
             className="w-full"
           />
         ))}
+      </div>
       </div>
 
       <div>
