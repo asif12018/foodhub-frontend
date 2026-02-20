@@ -24,6 +24,7 @@ export interface Food {
   name: string;
   description: string;
   price: number;
+  discountPrice?: number;
   image?: string[];
   cuisine: string;
   dietary_tags: string[];
@@ -80,6 +81,18 @@ export const foodService = {
       return { data: data, error: null };
     } catch (err: any) {
       console.error(err);
+      return {
+        data: null,
+        error: { message: err.message || "Something went wrong" },
+      };
+    }
+  },
+  getFoodById: async function (id: string) {
+    try {
+      const res = await fetch(`${API_URL}/api/provider/menu/${id}`);
+      const data = await res.json();
+      return { data: data, error: null };
+    } catch (err: any) {
       return {
         data: null,
         error: { message: err.message || "Something went wrong" },

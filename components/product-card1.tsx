@@ -46,12 +46,11 @@ interface ProductCard1Props {
 
 const ProductCard1 = ({ className, product }: ProductCard1Props) => {
   const { regular, sale, currency } = product.price;
-
+  // console.log(product)
   return (
-    <a
-      href={product.link || "#"}
+    <div
       className={cn(
-        "block max-w-md transition-opacity hover:opacity-80",
+        "block max-w-md transition-opacity hover:opacity-80 w-full",
         className,
       )}
     >
@@ -83,24 +82,44 @@ const ProductCard1 = ({ className, product }: ProductCard1Props) => {
             {product.description}
           </CardDescription>
           <div className="mt-auto">
-            <p><span className="font-bold">Restaurant: </span>{product.restaurant}</p>
-            <p><span className="font-bold">Price: </span>{product.price.regular} tk</p>
-            
-            {
-              product.price.sale && (
-                <p><span className="font-bold">Discount Price: </span>{product.price.sale} tk</p>
-              )
-            }
+            <p>
+              <span className="font-bold">Restaurant: </span>
+              {product.restaurant}
+            </p>
+            <p>
+              <span className="font-bold">Price: </span>
+              {product.price.regular} tk
+            </p>
 
-            <p><span className="font-bold">Cuisne: </span>{product.cuisine}</p>
-            <p><span className="font-bold">Preparation time: </span>{product.preparation_time} Minutes</p>
-            <p><span className="font-bold">Dietary Tags: </span>{product.dietary_tags.map((tag) => <Badge key={tag}>{tag}</Badge> )}</p>
-             
-             <Button asChild className="w-full mt-2"><Link href={`/allFood/${product.id}`}>View and Order</Link></Button>
+            {product.price.sale && (
+              <p>
+                <span className="font-bold">Discount Price: </span>
+                {product.price.sale} tk
+              </p>
+            )}
+
+            <p>
+              <span className="font-bold">Cuisne: </span>
+              {product.cuisine}
+            </p>
+            <p>
+              <span className="font-bold">Preparation time: </span>
+              {product.preparation_time} Minutes
+            </p>
+            <p>
+              <span className="font-bold">Dietary Tags: </span>
+              {product.dietary_tags.map((tag) => (
+                <Badge key={tag}>{tag}</Badge>
+              ))}
+            </p>
+
+            <Button asChild className="w-full mt-2">
+              <Link href={`/allFood/${product.id}`}>View and Order</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
-    </a>
+    </div>
   );
 };
 

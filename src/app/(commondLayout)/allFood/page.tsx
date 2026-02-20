@@ -95,30 +95,32 @@ export default async function AllFood({
 
       <div className="container mx-auto">
         <div className="grid grid-cols-1 justify-center items-center md:grid-cols-2  lg:grid-cols-3 gap-6">
-        {data?.data?.data?.map((food) => (
-          <ProductCard1
-            key={food.id}
-            product={{
-              name: food.name,
-              description: food.description,
-              restaurant: food?.profile?.RestaurantName,
-              price: {
-                regular: food.price,
-                currency: "BDT",
-              },
-              image: {
-                src: food.image?.[0] || "https://placehold.co/600x400",
-                alt: food.name,
-              },
-              cuisine: food.cuisine,
-              dietary_tags: food.dietary_tags,
-              preparation_time: food.prepTimeMinutes,
-              link: `/food/${food.id}`,
-            }}
-            className="w-full"
-          />
-        ))}
-      </div>
+          {data?.data?.data?.map((food) => (
+            <ProductCard1
+              key={food.id}
+              product={{
+                id: food.id,
+                name: food.name,
+                description: food.description,
+                restaurant: food?.profile?.RestaurantName,
+                price: {
+                  regular: food.price,
+                  sale: food.discountPrice,
+                  currency: "BDT",
+                },
+                image: {
+                  src: food.image?.[0] || "https://placehold.co/600x400",
+                  alt: food.name,
+                },
+                cuisine: food.cuisine,
+                dietary_tags: food.dietary_tags,
+                preparation_time: food.prepTimeMinutes,
+                link: `/food/${food.id}`,
+              }}
+              className="w-full"
+            />
+          ))}
+        </div>
       </div>
 
       <div>

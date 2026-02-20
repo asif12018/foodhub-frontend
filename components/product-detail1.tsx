@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/carousel";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import foodSingleData from "@/src/constants/food.types";
 type StockStatusCode = "IN_STOCK" | "OUT_OF_STOCK";
 
 interface StockInfo {
@@ -103,7 +103,7 @@ const PRODUCT_DETAILS = {
   price: {
     regular: 80.0,
     sale: 69.0,
-    currency: "USD",
+    currency: "BDT",
   },
   hinges: {
     size: {
@@ -164,30 +164,40 @@ const PRODUCT_DETAILS = {
       height: 2880,
       sizes: "(min-width: 1920px) 1920px, (min-width: 1280px) 1280px, 100vw",
     },
-    
-    
-   
   ],
 };
 
 interface ProductDetail1Props {
   className?: string;
+  food: foodSingleData;
 }
 
-const ProductDetail1 = ({ className }: ProductDetail1Props) => {
+const ProductDetail1 = ({ className, food }: ProductDetail1Props) => {
+  console.log(food, "this is food");
   return (
     <section className={cn("py-32", className)}>
       <div className="container">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
           <div>
-            <ProductImages images={PRODUCT_DETAILS.images} />
+            <ProductImages
+              images={[
+                {
+                  src: food.imageUrl || "https://placehold.co/600x400",
+                  srcset: food.imageUrl || "https://placehold.co/600x400",
+                  alt: food.name || "food image",
+                  width: 600,
+                  height: 400,
+                  sizes: "100vw",
+                },
+              ]}
+            />
           </div>
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex-1">
                   <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-                    {PRODUCT_DETAILS.name}
+                    {food.name}
                   </h1>
                   <div className="mt-3 flex flex-wrap items-center gap-4">
                     <Reviews
@@ -196,16 +206,18 @@ const ProductDetail1 = ({ className }: ProductDetail1Props) => {
                     />
                     <Badge variant="secondary">
                       <CircleCheck />
-                      In Stock
+                      {food.isAvailable ? "ready to order" : "closed"}
                     </Badge>
                   </div>
                 </div>
-                <Price {...PRODUCT_DETAILS.price} />
+                <Price
+                  regular={food.price}
+                  sale={food.discountPrice}
+                  currency="BDT"
+                />
               </div>
 
-              <p className="text-muted-foreground">
-                {PRODUCT_DETAILS.description}
-              </p>
+              <p className="text-muted-foreground">{food.description}</p>
             </div>
 
             <Button size="lg" className="w-full">
@@ -414,7 +426,7 @@ const Price = ({ regular, sale, currency }: PriceProps) => {
 
   const formatCurrency = (
     value: number,
-    currency: string = "USD",
+    currency: string = "BDT",
     locale: string = "en-US",
   ) => {
     return new Intl.NumberFormat(locale, {
