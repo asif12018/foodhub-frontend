@@ -28,6 +28,9 @@ export interface Food {
   cuisine: string;
   dietary_tags: string[];
   prepTimeMinutes: number;
+  profile?: {
+    RestaurantName: string;
+  };
 }
 
 export interface Pagination {
@@ -50,10 +53,11 @@ export const foodService = {
       if (params) {
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined && value !== null && value !== "") {
-            url.searchParams.append(key, value);
+            url.searchParams.append(key, String(value));
           }
         });
       }
+      console.log("Fetching food with URL:", url.toString());
       //function to dynamically tell the server or next js is it will cached or not for srr or issr
       const config: RequestInit = {};
       if (options?.cache) {
@@ -62,10 +66,17 @@ export const foodService = {
       if (options?.revalidate) {
         config.next = { revalidate: options.revalidate };
       }
-
-      config.next = { ...config.next, tags: ["menu"] };
+      if (options?.cache !== "no-store") {
+        config.next = { ...config.next, tags: ["menu"] };
+      }
       const res = await fetch(url.toString(), config);
       const data = await res.json();
+      console.log(
+        "Fetched data from backend:",
+        data?.data?.data?.length,
+        "items for URL:",
+        url.toString(),
+      );
       return { data: data, error: null };
     } catch (err: any) {
       console.error(err);
@@ -75,15 +86,18 @@ export const foodService = {
       };
     }
   },
-  getMinMaxPrice: async function (){
-    try{
+  getMinMaxPrice: async function () {
+    try {
       const url = new URL(`${API_URL}/api/provider/price`);
       const res = await fetch(url.toString());
       const data = await res.json();
-      return {data: data?.data, error:null }
-    }catch(err:any){
+      return { data: data?.data, error: null };
+    } catch (err: any) {
       console.error(err);
-      return {data: null, error: {message: err.message || "Something went wrong"}}
+      return {
+        data: null,
+        error: { message: err.message || "Something went wrong" },
+      };
     }
-  }
+  },
 };

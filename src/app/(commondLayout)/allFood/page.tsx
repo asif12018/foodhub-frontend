@@ -22,14 +22,17 @@ export default async function AllFood({
     page?: string;
     cuisine?: string;
     dietary_tags?: string;
+    minPrice?: string;
+    maxPrice?: string;
   }>;
 }) {
-
   //pagination code
   const resolvedParams = await searchParams;
   const currentPage = Number(resolvedParams.page) || 1;
   const cuisine = resolvedParams.cuisine;
   const dietary_tags = resolvedParams.dietary_tags;
+  const minPrice = resolvedParams.minPrice;
+  const maxPrice = resolvedParams.maxPrice;
 
   //-----------------
   const { data: categoriesData } = await categoryService.getAllCategory();
@@ -40,16 +43,18 @@ export default async function AllFood({
       page: currentPage,
       cuisine: cuisine,
       dietary_tags: dietary_tags ? dietary_tags.split(",") : undefined,
+      minPrice: minPrice ? Number(minPrice) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
     },
     {
-      cache: "no-cache",
+      cache: "no-store",
     },
   );
 
   //min max price
 
-  const {data:priceData, error:priceError} = await foodService.getMinMaxPrice();
-
+  const { data: priceData, error: priceError } =
+    await foodService.getMinMaxPrice();
 
   //pagination code
 
@@ -64,6 +69,8 @@ export default async function AllFood({
     const params = new URLSearchParams();
     if (cuisine) params.set("cuisine", cuisine);
     if (dietary_tags) params.set("dietary_tags", dietary_tags);
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
     params.set("page", pageNumber.toString());
     return `?${params.toString()}`;
   };
@@ -73,23 +80,27 @@ export default async function AllFood({
   return (
     <div>
       <h1 className="text-2xl font-bold text-center mt-5">All Food</h1>
-
       <CuisineFilter categories={categoriesData?.data || []} />
       <div className="my-5 flex items-center justify-center gap-2">
         <CheckboxDiateryPreference />
       </div>
 
       <div className="my-10">
-          <SliderControlled min={priceData.min.price || 0} max={priceData.max.price || 2000} step={5}/>
+        <SliderControlled
+          min={priceData.min.price || 0}
+          max={priceData.max.price || 2000}
+          step={5}
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 justify-center items-center md:grid-cols-2  lg:grid-cols-3 gap-6 border-2">
         {data?.data?.data?.map((food) => (
           <ProductCard1
             key={food.id}
             product={{
               name: food.name,
               description: food.description,
+              restaurant: food?.profile?.RestaurantName,
               price: {
                 regular: food.price,
                 currency: "BDT",

@@ -35,6 +35,7 @@ export interface Product {
   cuisine: string;
   dietary_tags: string[];
   preparation_time: number;
+  restaurant?: string;
 }
 
 interface ProductCard1Props {
@@ -81,8 +82,9 @@ const ProductCard1 = ({ className, product }: ProductCard1Props) => {
             {product.description}
           </CardDescription>
           <div className="mt-auto">
-            
+            <p><span className="font-bold">Restaurant: </span>{product.restaurant}</p>
             <p><span className="font-bold">Price: </span>{product.price.regular} tk</p>
+            
             {
               product.price.sale && (
                 <p><span className="font-bold">Discount Price: </span>{product.price.sale} tk</p>
